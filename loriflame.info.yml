@@ -1,0 +1,64 @@
+name: Loriflame Install Profile
+type: profile
+description: 'Loriflame REST API install profile.'
+version: 8.x
+core: 8.x
+distribution: TRUE
+dependencies:
+  - admin_toolbar
+  - adminimal_admin_toolbar
+  - automated_cron
+  - basic_auth
+  - block
+  - block_content
+  - breakpoint
+  - ckeditor
+  - color
+  - comment
+  - config
+  - config_update
+  - contact
+  - contextual
+  - datetime
+  - dblog
+  - ds
+  - ds_extras
+  - editor
+  - entity_reference
+  - field_ui
+  - field_group
+  - file
+  - filter
+  - features
+  - features_ui
+  - hal
+  - help
+  - history
+  - image
+  - link
+  - menu_link_content
+  - menu_ui
+  - node
+  - node
+  - options
+  - page_cache
+  - path
+  - quickedit
+  - rdf
+  - rest
+  - serialization
+  - search
+  - shortcut
+  - system
+  - taxonomy
+  - text
+  - user
+  - views
+  - views_ui
+  # Custom
+  - loriflame_product
+  - loriflame_promo
+  - loriflame_restful
+themes:
+  - adminimal_theme
+  - bartik

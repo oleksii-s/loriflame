@@ -1,0 +1,20 @@
+##
+# @file loriflame.make.yml
+# loriflame installation Profile
+##
+api: "2"
+core: "8.x"
+defaults:
+  projects:
+    subdir: "contrib"
+    overwrite: TRUE
+
+# Contrib Modules and Themes
+projects:
+  adminimal_theme: "1.1"
+  admin_toolbar: "1.10"
+  adminimal_admin_toolbar: "1.3"
+  features: "3.0-beta7"
+  config_update: "1.1"
+  field_group: "1.0-rc4"
+  ds: "2.5"

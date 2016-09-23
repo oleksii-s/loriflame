@@ -1,0 +1,10 @@
+{
+    "require": {
+        "drush/drush": "8.*"
+    },
+    "require-dev": {
+        "behat/behat": "3.0.*@dev",
+        "drupal/drupal-extension": "3.0.*",
+        "phpspec/phpspec": "~2.0"
+    }
+}

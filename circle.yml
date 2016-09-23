@@ -1,0 +1,71 @@
+machine:
+  hosts:
+    SERVER: 127.0.0.1
+    loriflame.circleci.dev: 127.0.0.1
+
+  environment:
+    CIRCLE_ENV:   test
+    SERVER:       loriflame.local
+    DATABASE_URL: mysql://root:qwerty@localhost/
+    PROJECT_NAME: loriflame
+    PROFILE_NAME: loriflame
+    PROJECT_TMP:  $HOME/loriflame/tmp
+    CI_SRC:       $PROJECT_TMP/circle
+    CI_SCRIPTS:   $CI_SRC/scripts
+    CI_CONF:      $CI_SRC/conf
+    CI_ASSETS:    $CI_SRC/assets
+    TEST_BUILD:   $HOME/loriflame_test
+    DEPLOY_DEST: $HOME/loriflame_deploy
+    DEPLOY_REPO:  loriflame@svn-5679.devcloud.hosting.acquia.com:loriflame.git
+    DEPLOY_BRANCH: master
+
+dependencies:
+  pre:
+#    - echo "sendmail_path=/bin/true" > /opt/circleci/php/$(phpenv global)/etc/php.ini
+    - echo "sendmail_path=/usr/sbin/sendmail" > /opt/circleci/php/$(phpenv global)/etc/php.ini
+    - echo "always_populate_raw_post_data = -1" > /opt/circleci/php/$(phpenv global)/etc/php.ini
+    - echo "memory_limit=256M" > /opt/circleci/php/$(phpenv global)/etc/conf.d/memory.ini
+    - sudo cp tmp/circle/conf/vhost.conf /etc/apache2/sites-available/default
+    - echo "ServerName localhost" | sudo tee /etc/apache2/conf-available/fqdn.conf
+    - sudo a2enconf fqdn
+    - sudo sed -e "s?%PROJECT_DIR%?$(pwd)/www?g" --in-place /etc/apache2/sites-available/default
+    - sudo a2enmod rewrite
+    - sudo service apache2 restart
+    - mysql -u ubuntu -e "CREATE DATABASE IF NOT EXISTS $PROFILE_NAME;"
+    - sudo service mysql restart
+    #1
+    - sudo apt-get update
+    - sudo apt-get install php-pear
+    - sudo pear install mail
+    - sudo pear install Net_SMTP
+    - sudo pear install Auth_SASL
+    - sudo pear install mail_mime
+    - sudo apt-get -y install postfix
+  override:
+    - composer install --prefer-dist
+    - composer global require drush/drush:8.* --prefer-dist
+  post:
+    - /usr/bin/env PHP_OPTIONS="-d sendmail_path=`which true`"
+    - $CI_SCRIPTS/install.sh \ > $CIRCLE_ARTIFACTS/install.log
+    - echo "after install"
+    - sudo chown -R $(whoami):www-data $TEST_BUILD
+    - echo "after chown"
+
+test:
+  override:
+      - bin/behat
+
+deployment:
+  aquia:
+    branch: $DEPLOY_BRANCH
+    commands:
+      - echo -e "Host svn-5679.devcloud.hosting.acquia.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+      - echo -e "Host $ACQUIA_URL\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+      - echo -e "machine github.com\n  login ci-user\n  password $ACQUIA_PASSWORD" >> ~/.netrc
+      - composer install --no-dev --no-scripts
+      - bin/acquia_deploy
+      - mysqldump -u ubuntu adonis > adonis.sql
+      - scp adonis.sql adonis.dev@$ACQUIA_URL:/home/adonis
+      - ssh -A adonis.dev@$ACQUIA_URL 'drush @adonis.dev sqlc < adonis.sql'
+      - ssh -A adonis.dev@$ACQUIA_URL 'rm adonis.sql'
+

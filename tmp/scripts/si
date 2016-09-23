@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# USAGE
+# $ bash si.sh [database_name]
+DB_NAME=$1
+
+echo ">> Updating dependencies via composer ..."
+composer update
+
+echo ">> Running drupal installation via drush ..."
+drush site-install loriflame --db-url="mysql://root:qwerty@localhost/${DB_NAME}" --site-name=Loriflame --account-name=admin --account-pass=qwerty --account-mail=oleksii-semko@gmail.com -y

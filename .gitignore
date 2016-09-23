@@ -1,0 +1,25 @@
+# System
+.DS_Store
+*.bak
+*~
+*.komodoproject
+nbproject
+
+#IDE
+.idea/
+
+# Backups
+*.tar.gz
+*.zip
+*.sql
+
+# Project
+modules/contrib/*
+themes/contrib/*
+
+# Composer
+vendor/
+
+# Sass
+.sass-cache/
+themes/custom/*/css

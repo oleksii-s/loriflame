@@ -1,0 +1,14 @@
+# Set drush make API version.
+api: "2"
+core: "8.x"
+
+projects:
+  drupal:
+    type: "core"
+    version: "8.1.8"
+  loriflame:
+    type: "profile"
+    download:
+      type: "git"
+      url: "git@github.com:oleksii-s/loriflame.git"
+      branch: "master"
